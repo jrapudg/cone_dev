@@ -125,6 +125,7 @@ class ConstructEgo(nn.Module):
         self.map_encoder = MapEncoderPts(d_k=d_k, map_attr=map_attr, dropout=self.dropout)
         self.construction_encoder = MapEncoderPts(d_k=d_k, map_attr=map_attr, dropout=self.dropout)
         self.map_attn_layers = nn.MultiheadAttention(self.d_k, num_heads=self.num_heads, dropout=0.3)
+        #self.construction_attn_layers = nn.MultiheadAttention(self.d_k, num_heads=self.num_heads, dropout=0.3)
         self.construction_attn_layers = nn.MultiheadAttention(self.d_k, num_heads=self.num_heads, dropout=0.3)
 
         # ============================== AutoBot-Ego DECODER ==============================
@@ -289,17 +290,28 @@ class ConstructEgo(nn.Module):
             if self.sequence_attention:
                 for d in range(self.L_dec):
                     if d == 1:
-                        ego_dec_emb_con = self.construction_attn_layers(query=out_seq, 
+                        #print("HERE 1")
+                        #print("HERE 2")
+                        ego_dec_emb_map = self.construction_attn_layers(query=out_seq, 
                                                                         key=construction_features, 
                                                                         value=construction_features,
                                                                         key_padding_mask=construction_segs_masks)[0]
-                        out_seq = out_seq + ego_dec_emb_con
+                        
+                        out_seq = out_seq + ego_dec_emb_map
 
                         ego_dec_emb_map = self.map_attn_layers(query=out_seq, 
                                                                key=map_features, 
                                                                value=map_features,
                                                                key_padding_mask=road_segs_masks)[0]
                         
+                        
+                        #print(ego_dec_emb_map)
+                        #print(ego_dec_emb_map)
+                        #print(construction_segs_masks.shape)
+                        #print(construction_segs_masks.sum())
+                        
+                        
+                        #print("HERE 3")
                         out_seq = out_seq + ego_dec_emb_map
                         
                     out_seq = self.tx_decoder[d](out_seq, context, tgt_mask=time_masks, memory_key_padding_mask=env_masks)

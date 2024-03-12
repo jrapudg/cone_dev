@@ -247,7 +247,7 @@ class Args:
         self.__dict__.update(kwargs)
 
 if __name__ == "__main__":
-    args = Args(exp_id="xy_seq_attention_2.0",
+    args = Args(exp_id="xywl_2.0_inv",
                 disable_cuda=False, 
                 seed=1, 
                 learning_rate=0.00075,

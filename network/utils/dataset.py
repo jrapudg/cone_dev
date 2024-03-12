@@ -54,11 +54,16 @@ class CarlaH5Dataset(Dataset):
         else:
             raise NotImplementedError
         
+        is_all_zeros_np = np.all(constr_pts == 0)
+        if is_all_zeros_np:
+            constr_pts[0, 0, :] = np.array([100, 100, 0, 0, 0, 0, 0, 1])
+
         ego_in = ego_in[:,features_mask]
         ego_out = ego_out[:,features_mask]
         road_pts = road_pts[:,:,features_mask]
         constr_pts = constr_pts[:,:,features_mask]
-        print(constr_pts)
+
+        
 
         if "train" in self.split_name:
             should_we_mirror = np.random.choice([0, 1])
