@@ -247,7 +247,7 @@ class Args:
         self.__dict__.update(kwargs)
 
 if __name__ == "__main__":
-    args = Args(exp_id="xywl_2.0_inv",
+    args = Args(exp_id="inv_prev",
                 disable_cuda=False, 
                 seed=1, 
                 learning_rate=0.00075,
@@ -255,7 +255,7 @@ if __name__ == "__main__":
                 learning_rate_sched=[10, 20, 30, 40, 50],
                 dataset="carla",
                 save_dir="/home/juan/Documents/simulators/cone_sim/",
-                dataset_path="/home/juan/Documents/simulators/cone_sim/dataset/",
+                dataset_path="/home/juan/Documents/simulators/cone_sim/dataset_bp/",
                 model_type="Cone-Ego",
                 batch_size=64,
                 hidden_size=128,
@@ -270,11 +270,11 @@ if __name__ == "__main__":
                 kl_weight=20.0,
                 use_FDEADE_aux_loss=True,
                 grad_clip_norm = 5.0,
-                map_attr = 3, #7
-                k_attr = 2, #6
-                construction_attention=True, 
-                sequence_attention= True,
-                baseline = False
+                map_attr = 7, #7
+                k_attr = 6, #6
+                construction_attention=False, 
+                sequence_attention= False,
+                baseline = True
                 )
 
     model_configname = ""
@@ -283,6 +283,11 @@ if __name__ == "__main__":
     model_configname += "_D"+str(args.num_decoder_layers) + "_TXH"+str(args.tx_hidden_size) + "_NH"+str(args.tx_num_heads)
     model_configname += "_EW"+str(int(args.entropy_weight)) + "_KLW"+str(int(args.kl_weight))
     model_configname += "_NormLoss" if args.use_FDEADE_aux_loss else ""
+    model_configname += "_Baseline" if args.baseline else ""
+    model_configname += "_Cone" if (not args.baseline and args.construction_attention) else ""
+    model_configname += "_kattr"+str(args.k_attr)
+    model_configname += "_mattr"+str(args.map_attr)
+
 
     if args.exp_id is not None:
         model_configname += ("_" + args.exp_id)
